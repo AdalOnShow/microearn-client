@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = "/api/proxy";
 
 class ApiError extends Error {
   constructor(message, status, data) {
@@ -18,14 +18,6 @@ async function fetchApi(endpoint, options = {}) {
     },
     ...options,
   };
-
-  // Add auth token if available
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
 
   try {
     const response = await fetch(url, config);
@@ -62,6 +54,7 @@ export const api = {
   getUsers: (params) => fetchApi(`/users?${new URLSearchParams(params)}`),
   getTopWorkers: (limit = 6) => fetchApi(`/users/top-workers?limit=${limit}`),
   getBuyerStats: () => fetchApi("/users/buyer/stats"),
+  getWorkerStats: () => fetchApi("/users/worker/stats"),
   getUser: (id) => fetchApi(`/users/${id}`),
   updateProfile: (data) => fetchApi("/users/profile", { method: "PATCH", body: JSON.stringify(data) }),
   updateUserRole: (id, role) => fetchApi(`/users/${id}/role`, { method: "PATCH", body: JSON.stringify({ role }) }),
@@ -69,6 +62,7 @@ export const api = {
 
   // Tasks
   getTasks: (params) => fetchApi(`/tasks?${new URLSearchParams(params)}`),
+  getAvailableTasks: () => fetchApi("/tasks/available"),
   getTask: (id) => fetchApi(`/tasks/${id}`),
   createTask: (data) => fetchApi("/tasks", { method: "POST", body: JSON.stringify(data) }),
   updateTask: (id, data) => fetchApi(`/tasks/${id}`, { method: "PATCH", body: JSON.stringify(data) }),

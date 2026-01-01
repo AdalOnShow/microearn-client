@@ -58,10 +58,17 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setErrorMessage(result.error);
-      } else {
+        // NextAuth returns "CredentialsSignin" for invalid credentials
+        if (result.error === "CredentialsSignin") {
+          setErrorMessage("Invalid email or password");
+        } else {
+          setErrorMessage(result.error);
+        }
+      } else if (result?.ok) {
         router.push(callbackUrl);
         router.refresh();
+      } else {
+        setErrorMessage("Login failed. Please try again.");
       }
     } catch (err) {
       setErrorMessage("An unexpected error occurred");

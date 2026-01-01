@@ -17,54 +17,69 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password are required");
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
+          }
+
+          const db = await getDb();
+          const user = await db.collection("users").findOne({
+            email: credentials.email.toLowerCase().trim(),
+          });
+
+          if (!user) {
+            return null;
+          }
+
+          // Check if user has a password (might be Google-only user)
+          if (!user.password) {
+            return null;
+          }
+
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+
+          if (!isValid) {
+            return null;
+          }
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+            coins: user.coin || 0,
+          };
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
         }
-
-        const db = await getDb();
-        const user = await db.collection("users").findOne({
-          email: credentials.email,
-        });
-
-        if (!user) {
-          throw new Error("No user found with this email");
-        }
-
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-
-        if (!isValid) {
-          throw new Error("Invalid password");
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
-          coins: user.coins,
-        };
       },
     }),
   ],
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        const db = await getDb();
-        const existingUser = await db.collection("users").findOne({
-          email: user.email,
-        });
-
-        if (!existingUser) {
-          await db.collection("users").insertOne({
-            name: user.name,
+        try {
+          const db = await getDb();
+          const existingUser = await db.collection("users").findOne({
             email: user.email,
-            image: user.image,
-            role: "Worker",
-            coins: 10,
-            provider: "google",
-            createdAt: new Date(),
           });
+
+          if (!existingUser) {
+            await db.collection("users").insertOne({
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              role: "Worker",
+              coin: 10,
+              provider: "google",
+              createdAt: new Date(),
+            });
+          }
+        } catch (error) {
+          console.error("Google sign in error:", error);
+          return false;
         }
       }
       return true;
@@ -87,7 +102,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (dbUser) {
             token.id = dbUser._id.toString();
             token.role = dbUser.role;
-            token.coins = dbUser.coins;
+            token.coins = dbUser.coin || 0;
             token.name = dbUser.name;
             token.picture = dbUser.image;
           }
