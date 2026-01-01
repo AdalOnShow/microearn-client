@@ -26,7 +26,6 @@ async function getTopWorkers() {
   }
 }
 
-// Fallback data when no workers exist
 const fallbackWorkers = [
   { id: "1", name: "Alex Thompson", avatar: "", coins: 15420 },
   { id: "2", name: "Maria Garcia", avatar: "", coins: 12850 },
@@ -36,58 +35,69 @@ const fallbackWorkers = [
   { id: "6", name: "Emma Wilson", avatar: "", coins: 7920 },
 ];
 
-const rankColors = [
-  "bg-amber-500",
-  "bg-slate-400",
-  "bg-amber-700",
+const rankStyles = [
+  { bg: "bg-amber-100", border: "border-amber-300", badge: "bg-amber-500" },
+  { bg: "bg-slate-100", border: "border-slate-300", badge: "bg-slate-400" },
+  { bg: "bg-orange-100", border: "border-orange-300", badge: "bg-orange-600" },
 ];
 
 export async function BestWorkers() {
   const workers = await getTopWorkers();
   const topWorkers = workers.length > 0 ? workers : fallbackWorkers;
-  
+
   return (
-    <section className="py-16 sm:py-20 lg:py-24">
+    <section className="border-y border-border bg-muted/30 py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Trophy className="h-6 w-6 text-muted-foreground" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-background border border-border">
+            <Trophy className="h-6 w-6 text-amber-500" />
           </div>
           <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Top Workers
+            Top Earners
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            Our highest earning members this month
+            Our highest performing members this month
           </p>
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {topWorkers.map((worker, index) => (
-            <Card key={worker.id} className="overflow-hidden">
-              <CardContent className="flex items-center gap-4 p-5">
-                <div className="relative">
-                  <Avatar className="h-12 w-12 border-2 border-border">
-                    <AvatarImage src={worker.avatar} alt={worker.name} />
-                    <AvatarFallback className="bg-muted text-base font-medium">
-                      {worker.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  {index < 3 && (
-                    <span className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white ${rankColors[index]}`}>
-                      {index + 1}
-                    </span>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="truncate font-medium text-foreground">{worker.name}</p>
-                  <Badge variant="secondary" className="mt-1.5 gap-1">
-                    <Coins className="h-3 w-3" />
-                    {worker.coins.toLocaleString()} coins
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {topWorkers.map((worker, index) => {
+            const isTopThree = index < 3;
+            const rankStyle = rankStyles[index] || null;
+
+            return (
+              <Card 
+                key={worker.id} 
+                className={`overflow-hidden border ${isTopThree ? rankStyle?.border : 'border-border'}`}
+              >
+                <CardContent className={`flex items-center gap-4 p-5 ${isTopThree ? rankStyle?.bg : 'bg-background'}`}>
+                  <div className="relative">
+                    <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
+                      <AvatarImage src={worker.avatar} alt={worker.name} />
+                      <AvatarFallback className="bg-muted text-base font-medium">
+                        {worker.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isTopThree && (
+                      <span className={`absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white ${rankStyle?.badge}`}>
+                        {index + 1}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="truncate font-medium text-foreground">
+                      {worker.name}
+                    </p>
+                    <div className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <Coins className="h-4 w-4 text-amber-500" />
+                      <span className="font-medium">{worker.coins.toLocaleString()}</span>
+                      <span>coins</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>

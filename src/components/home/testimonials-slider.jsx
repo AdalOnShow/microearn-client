@@ -1,46 +1,51 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Quote } from "lucide-react";
+import { Star } from "lucide-react";
 
 import "swiper/css";
+import "swiper/css/pagination";
 
 const testimonials = [
   {
     name: "Sarah Johnson",
     role: "Freelancer",
     avatar: "",
-    content: "MicroEarn has been a great way to earn extra income in my spare time. The tasks are simple and payments are always on time.",
+    rating: 5,
+    content: "MicroEarn has been a game-changer for my income. The tasks are straightforward, and I've never had an issue with payments. Highly recommend!",
   },
   {
     name: "Michael Chen",
     role: "Student",
     avatar: "",
-    content: "As a student, I needed flexible work. MicroEarn lets me earn money between classes without any commitment.",
+    rating: 5,
+    content: "Perfect for students! I earn between classes and the flexibility is unmatched. Already made enough to cover my monthly expenses.",
   },
   {
     name: "Emily Davis",
     role: "Stay-at-home Mom",
     avatar: "",
-    content: "I can complete tasks while my kids nap. It's perfect for anyone looking for flexible earning opportunities.",
+    rating: 5,
+    content: "I complete tasks while my kids nap. It's the perfect side income for anyone with limited time. The platform is so easy to use.",
   },
   {
     name: "James Wilson",
     role: "Part-time Worker",
     avatar: "",
-    content: "The platform is easy to use and the support team is responsive. I've been using it for 6 months now.",
+    rating: 4,
+    content: "Been using MicroEarn for 6 months now. The support team is responsive and the variety of tasks keeps things interesting.",
   },
 ];
 
 export function TestimonialsSlider() {
   return (
     <Swiper
-      modules={[Autoplay]}
-      autoplay={{ delay: 4000, disableOnInteraction: false }}
-      speed={800}
+      modules={[Autoplay, Pagination]}
+      autoplay={{ delay: 5000, disableOnInteraction: false }}
+      speed={600}
       loop={true}
       spaceBetween={24}
       slidesPerView={1}
@@ -48,16 +53,34 @@ export function TestimonialsSlider() {
         640: { slidesPerView: 2 },
         1024: { slidesPerView: 3 },
       }}
-      className="w-full"
+      className="w-full pb-12"
     >
       {testimonials.map((testimonial, index) => (
         <SwiperSlide key={index}>
-          <Card className="h-full">
-            <CardContent className="p-6">
-              <Quote className="h-8 w-8 text-muted-foreground/30" />
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                {testimonial.content}
+          <Card className="h-full border-border">
+            <CardContent className="flex h-full flex-col p-6">
+              {/* Rating stars */}
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${
+                      i < testimonial.rating
+                        ? "fill-amber-400 text-amber-400"
+                        : "fill-muted text-muted"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Testimonial content */}
+              <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                "{testimonial.content.length > 120 
+                  ? testimonial.content.slice(0, 120) + "..." 
+                  : testimonial.content}"
               </p>
+
+              {/* Author info */}
               <div className="mt-6 flex items-center gap-3 border-t border-border pt-4">
                 <Avatar className="h-10 w-10 border border-border">
                   <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
@@ -66,8 +89,12 @@ export function TestimonialsSlider() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium text-foreground">{testimonial.name}</p>
-                  <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {testimonial.role}
+                  </p>
                 </div>
               </div>
             </CardContent>

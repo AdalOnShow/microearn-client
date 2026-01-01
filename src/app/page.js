@@ -1,30 +1,28 @@
 import { BasicLayout } from "@/components/layouts";
-import { HeroSlider } from "@/components/home/hero-slider";
+import { HeroSection } from "@/components/home/hero-section";
+import { TrustSignals } from "@/components/home/trust-signals";
+import { HowItWorks } from "@/components/home/how-it-works";
 import { BestWorkers } from "@/components/home/best-workers";
 import { TestimonialsSlider } from "@/components/home/testimonials-slider";
-import { HowItWorks } from "@/components/home/how-it-works";
-import { WhyTrustUs } from "@/components/home/why-trust-us";
-import { SecurePayments } from "@/components/home/secure-payments";
+import { FinalCTA } from "@/components/home/final-cta";
 
 export default function Home() {
   return (
     <BasicLayout>
-      {/* Hero Section */}
-      <section className="border-b border-border bg-muted/20">
-        <HeroSlider />
-      </section>
+      {/* Hero Section - Clear value proposition with CTAs */}
+      <HeroSection />
 
-      {/* Best Workers */}
-      <BestWorkers />
+      {/* Trust Signals - Key benefits */}
+      <TrustSignals />
 
-      {/* How It Works */}
+      {/* How It Works - 3-step process */}
       <HowItWorks />
 
-      {/* Why Trust Us */}
-      <WhyTrustUs />
+      {/* Best Workers - Top earners showcase */}
+      <BestWorkers />
 
       {/* Testimonials */}
-      <section className="border-y border-border py-16 sm:py-20 lg:py-24">
+      <section className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -40,8 +38,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Secure Payments */}
-      <SecurePayments />
+      {/* Final CTA */}
+      <FinalCTA />
     </BasicLayout>
   );
 }

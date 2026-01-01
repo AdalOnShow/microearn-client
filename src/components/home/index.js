@@ -1,6 +1,6 @@
-export { HeroSlider } from "./hero-slider";
+export { HeroSection } from "./hero-section";
+export { TrustSignals } from "./trust-signals";
+export { HowItWorks } from "./how-it-works";
 export { BestWorkers } from "./best-workers";
 export { TestimonialsSlider } from "./testimonials-slider";
-export { HowItWorks } from "./how-it-works";
-export { WhyTrustUs } from "./why-trust-us";
-export { SecurePayments } from "./secure-payments";
+export { FinalCTA } from "./final-cta";
