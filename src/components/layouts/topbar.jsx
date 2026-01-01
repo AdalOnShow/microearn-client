@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 
 export function Topbar({ onMenuClick }) {
@@ -42,6 +43,8 @@ export function Topbar({ onMenuClick }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
+        
         <Badge variant="secondary" className="gap-1.5 px-3 py-1.5">
           <Coins className="h-3.5 w-3.5" />
           <span className="font-semibold">{user?.coins || 0}</span>

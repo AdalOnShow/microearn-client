@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Coins, LogOut, User, Github } from "lucide-react";
 
 export function Navbar() {
@@ -32,7 +33,9 @@ export function Navbar() {
           <span className="text-lg font-semibold tracking-tight">MicroEarn</span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          
           {user ? (
             <>
               <Link href="/dashboard">
