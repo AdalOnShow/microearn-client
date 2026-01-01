@@ -55,6 +55,7 @@ export const api = {
   getTopWorkers: (limit = 6) => fetchApi(`/users/top-workers?limit=${limit}`),
   getBuyerStats: () => fetchApi("/users/buyer/stats"),
   getWorkerStats: () => fetchApi("/users/worker/stats"),
+  getAdminStats: () => fetchApi("/users/admin/stats"),
   getUser: (id) => fetchApi(`/users/${id}`),
   updateProfile: (data) => fetchApi("/users/profile", { method: "PATCH", body: JSON.stringify(data) }),
   updateUserRole: (id, role) => fetchApi(`/users/${id}/role`, { method: "PATCH", body: JSON.stringify({ role }) }),
