@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { status } = useSession();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const error = searchParams.get("error");
 
@@ -22,6 +23,22 @@ export default function LoginPage() {
   });
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(error ? "Authentication failed" : "");
+
+  // Redirect authenticated users away from login page
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
+
+  // Show loading while checking session
+  if (status === "loading" || status === "authenticated") {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +63,7 @@ export default function LoginPage() {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (error) {
+    } catch (err) {
       setErrorMessage("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -58,16 +75,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-semibold tracking-tight">Welcome Back</CardTitle>
+          <CardDescription>Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {errorMessage && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                 {errorMessage}
               </div>
             )}
@@ -140,7 +157,7 @@ export default function LoginPage() {
             Google
           </Button>
         </CardContent>
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center border-t border-border pt-6">
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link href="/register" className="font-medium text-foreground hover:underline">

@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import "swiper/css";
 
@@ -36,16 +37,19 @@ export function HeroSlider() {
     >
       {slides.map((slide, index) => (
         <SwiperSlide key={index}>
-          <div className="flex min-h-[400px] flex-col items-center justify-center px-4 py-16 text-center sm:min-h-[450px]">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <div className="flex min-h-[420px] flex-col items-center justify-center px-4 py-20 text-center sm:min-h-[480px] sm:py-24">
+            <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               {slide.title}
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               {slide.description}
             </p>
-            <div className="mt-8">
+            <div className="mt-10">
               <Link href={slide.cta.href}>
-                <Button size="lg">{slide.cta.text}</Button>
+                <Button size="lg" className="gap-2 px-8">
+                  {slide.cta.text}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
               </Link>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Quote } from "lucide-react";
 
 import "swiper/css";
 
@@ -53,18 +54,19 @@ export function TestimonialsSlider() {
         <SwiperSlide key={index}>
           <Card className="h-full">
             <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground">
-                &ldquo;{testimonial.content}&rdquo;
+              <Quote className="h-8 w-8 text-muted-foreground/30" />
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                {testimonial.content}
               </p>
-              <div className="mt-4 flex items-center gap-3">
-                <Avatar className="h-10 w-10">
+              <div className="mt-6 flex items-center gap-3 border-t border-border pt-4">
+                <Avatar className="h-10 w-10 border border-border">
                   <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-muted text-sm font-medium">
                     {testimonial.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium">{testimonial.name}</p>
+                  <p className="text-sm font-medium text-foreground">{testimonial.name}</p>
                   <p className="text-xs text-muted-foreground">{testimonial.role}</p>
                 </div>
               </div>

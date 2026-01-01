@@ -25,25 +25,29 @@ const features = [
 
 export function WhyTrustUs() {
   return (
-    <section className="py-16">
+    <section className="py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight">Why Trust MicroEarn</h2>
-          <p className="mt-2 text-muted-foreground">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Why Trust MicroEarn
+          </h2>
+          <p className="mt-3 text-base text-muted-foreground">
             Built on reliability and transparency
           </p>
         </div>
 
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div key={index} className="text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background">
-                  <Icon className="h-5 w-5 text-muted-foreground" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 border-border bg-background">
+                  <Icon className="h-6 w-6 text-foreground" />
                 </div>
-                <h3 className="mt-4 font-semibold">{feature.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h3 className="mt-5 text-base font-semibold text-foreground">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {feature.description}
                 </p>
               </div>

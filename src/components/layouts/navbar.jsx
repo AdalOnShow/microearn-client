@@ -23,10 +23,13 @@ export function Navbar() {
   };
 
   return (
-    <header className="border-b border-border bg-background">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-xl font-bold">
-          MicroEarn
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <span className="text-sm font-bold text-primary-foreground">M</span>
+          </div>
+          <span className="text-lg font-semibold tracking-tight">MicroEarn</span>
         </Link>
 
         <div className="flex items-center gap-3">
@@ -38,17 +41,17 @@ export function Navbar() {
                 </Button>
               </Link>
 
-              <Badge variant="secondary" className="gap-1 px-2 py-1">
-                <Coins className="h-3 w-3" />
-                <span>{user.coins || 0}</span>
+              <Badge variant="secondary" className="gap-1.5 px-2.5 py-1">
+                <Coins className="h-3.5 w-3.5" />
+                <span className="font-semibold">{user.coins || 0}</span>
               </Badge>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-9 w-9 border border-border">
                       <AvatarImage src={user.image} alt={user.name} />
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-muted text-sm font-medium">
                         {user.name?.charAt(0)?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>

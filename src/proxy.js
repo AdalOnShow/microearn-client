@@ -1,27 +1,34 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+const authRoutes = ["/login", "/register"];
+const protectedRoutes = ["/dashboard"];
+
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+  const pathname = nextUrl.pathname;
 
-  const isAuthPage = nextUrl.pathname.startsWith("/login") || 
-                     nextUrl.pathname.startsWith("/register");
-  const isDashboardPage = nextUrl.pathname.startsWith("/dashboard");
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   // Redirect logged-in users away from auth pages
-  if (isAuthPage && isLoggedIn) {
+  if (isAuthRoute && isLoggedIn) {
     return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
   // Protect dashboard routes
-  if (isDashboardPage && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
+  if (isProtectedRoute && !isLoggedIn) {
+    const loginUrl = new URL("/login", nextUrl);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|_next).*)",
+  ],
 };

@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Briefcase, User } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { status } = useSession();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +24,22 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Redirect authenticated users away from register page
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
+
+  // Show loading while checking session
+  if (status === "loading" || status === "authenticated") {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -79,7 +97,7 @@ export default function RegisterPage() {
         router.push("/dashboard");
         router.refresh();
       }
-    } catch (error) {
+    } catch (err) {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -91,16 +109,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create Account</CardTitle>
-          <CardDescription>Join MicroEarn and start earning</CardDescription>
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-semibold tracking-tight">Create Account</CardTitle>
+          <CardDescription>Join MicroEarn and start earning today</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -170,19 +188,24 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Role</Label>
-              <div className="grid grid-cols-2 gap-4">
+              <Label>Choose your role</Label>
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: "Worker" })}
-                  className={`rounded-md border p-4 text-center ${
+                  className={`flex flex-col items-center rounded-lg border-2 p-4 text-center ${
                     formData.role === "Worker"
                       ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                      : "border-border hover:border-muted-foreground/30"
                   }`}
                 >
-                  <p className="font-medium">Worker</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-full ${
+                    formData.role === "Worker" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  }`}>
+                    <User className="h-5 w-5" />
+                  </div>
+                  <p className="font-medium text-foreground">Worker</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
                     Complete tasks & earn
                   </p>
                   <p className="mt-2 text-sm font-semibold text-primary">+10 coins</p>
@@ -190,14 +213,19 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, role: "Buyer" })}
-                  className={`rounded-md border p-4 text-center ${
+                  className={`flex flex-col items-center rounded-lg border-2 p-4 text-center ${
                     formData.role === "Buyer"
                       ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                      : "border-border hover:border-muted-foreground/30"
                   }`}
                 >
-                  <p className="font-medium">Buyer</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-full ${
+                    formData.role === "Buyer" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  }`}>
+                    <Briefcase className="h-5 w-5" />
+                  </div>
+                  <p className="font-medium text-foreground">Buyer</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
                     Post tasks & hire
                   </p>
                   <p className="mt-2 text-sm font-semibold text-primary">+50 coins</p>
@@ -247,7 +275,7 @@ export default function RegisterPage() {
             Google
           </Button>
         </CardContent>
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center border-t border-border pt-6">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-foreground hover:underline">

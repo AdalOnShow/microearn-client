@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, FileText, AlertTriangle, Coins, Wallet } from "lucide-react";
+import { Users, FileText, AlertTriangle, Coins, Wallet, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 // Mock data - replace with API calls
@@ -43,71 +43,91 @@ export default async function AdminDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Page Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Platform overview and management</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Admin Dashboard</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Platform overview and management</p>
         </div>
 
         {/* Platform Stats */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardDescription>Total Users</CardDescription>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{platformStats.totalUsers}</p>
-              <p className="text-xs text-muted-foreground">
-                {platformStats.totalWorkers} workers, {platformStats.totalBuyers} buyers
-              </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">{platformStats.totalUsers}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {platformStats.totalWorkers} workers, {platformStats.totalBuyers} buyers
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Users className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardDescription>Total Tasks</CardDescription>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{platformStats.totalTasks}</p>
-              <p className="text-xs text-muted-foreground">{platformStats.activeTasks} active</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Tasks</p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">{platformStats.totalTasks}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{platformStats.activeTasks} active</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardDescription>Total Coins</CardDescription>
-              <Coins className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{platformStats.totalCoins.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">In circulation</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total Coins</p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">{platformStats.totalCoins.toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">In circulation</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Coins className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardDescription>Pending Actions</CardDescription>
-              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {platformStats.pendingWithdrawals + platformStats.pendingReports}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {platformStats.pendingWithdrawals} withdrawals, {platformStats.pendingReports} reports
-              </p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Pending Actions</p>
+                  <p className="mt-2 text-3xl font-semibold text-foreground">
+                    {platformStats.pendingWithdrawals + platformStats.pendingReports}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {platformStats.pendingWithdrawals} withdrawals, {platformStats.pendingReports} reports
+                  </p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Manage Users */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
             <div>
               <CardTitle>Manage Users</CardTitle>
-              <CardDescription>Recent users and role management</CardDescription>
+              <CardDescription className="mt-1">Recent users and role management</CardDescription>
             </div>
             <Link href="/dashboard/admin/users">
-              <Button variant="outline" size="sm">View All Users</Button>
+              <Button variant="outline" size="sm" className="gap-1">
+                View All Users
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
             </Link>
           </CardHeader>
           <CardContent>
@@ -126,14 +146,14 @@ export default async function AdminDashboard() {
                 {recentUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell className="text-muted-foreground">{user.email}</TableCell>
                     <TableCell>
                       <Badge variant={user.role === "Buyer" ? "default" : "secondary"}>
                         {user.role}
                       </Badge>
                     </TableCell>
-                    <TableCell>{user.coins}</TableCell>
-                    <TableCell>{user.createdAt}</TableCell>
+                    <TableCell className="font-medium">{user.coins}</TableCell>
+                    <TableCell className="text-muted-foreground">{user.createdAt}</TableCell>
                     <TableCell>
                       <Link href={`/dashboard/admin/users/${user.id}`}>
                         <Button size="sm" variant="outline">Manage</Button>
@@ -149,13 +169,16 @@ export default async function AdminDashboard() {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Pending Reports */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
                 <CardTitle>Pending Reports</CardTitle>
-                <CardDescription>Issues requiring attention</CardDescription>
+                <CardDescription className="mt-1">Issues requiring attention</CardDescription>
               </div>
               <Link href="/dashboard/admin/reports">
-                <Button variant="outline" size="sm">View All</Button>
+                <Button variant="outline" size="sm" className="gap-1">
+                  View All
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
               </Link>
             </CardHeader>
             <CardContent>
@@ -174,8 +197,8 @@ export default async function AdminDashboard() {
                       <TableCell>
                         <Badge variant="outline">{report.type}</Badge>
                       </TableCell>
-                      <TableCell>{report.reporter}</TableCell>
-                      <TableCell className="max-w-[150px] truncate">{report.reason}</TableCell>
+                      <TableCell className="text-muted-foreground">{report.reporter}</TableCell>
+                      <TableCell className="max-w-[150px] truncate text-muted-foreground">{report.reason}</TableCell>
                       <TableCell>
                         <Link href={`/dashboard/admin/reports/${report.id}`}>
                           <Button size="sm">Review</Button>
@@ -190,13 +213,16 @@ export default async function AdminDashboard() {
 
           {/* Pending Withdrawals */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
                 <CardTitle>Pending Withdrawals</CardTitle>
-                <CardDescription>Withdrawal requests to process</CardDescription>
+                <CardDescription className="mt-1">Withdrawal requests to process</CardDescription>
               </div>
               <Link href="/dashboard/admin/withdrawals">
-                <Button variant="outline" size="sm">View All</Button>
+                <Button variant="outline" size="sm" className="gap-1">
+                  View All
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
               </Link>
             </CardHeader>
             <CardContent>
@@ -213,7 +239,7 @@ export default async function AdminDashboard() {
                   {pendingWithdrawals.map((withdrawal) => (
                     <TableRow key={withdrawal.id}>
                       <TableCell className="font-medium">{withdrawal.user}</TableCell>
-                      <TableCell>{withdrawal.amount} coins</TableCell>
+                      <TableCell className="font-medium">{withdrawal.amount} coins</TableCell>
                       <TableCell>
                         <Badge variant="secondary">{withdrawal.method}</Badge>
                       </TableCell>
@@ -232,34 +258,54 @@ export default async function AdminDashboard() {
 
         {/* Quick Actions */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
+            <CardDescription className="mt-1">Common administrative tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <Link href="/dashboard/admin/users">
-                <Button variant="outline" className="w-full justify-start">
-                  <Users className="mr-2 h-4 w-4" />
-                  Manage Users
+                <Button variant="outline" className="h-auto w-full justify-start gap-3 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <Users className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Manage Users</p>
+                    <p className="text-xs text-muted-foreground">View and edit users</p>
+                  </div>
                 </Button>
               </Link>
               <Link href="/dashboard/admin/tasks">
-                <Button variant="outline" className="w-full justify-start">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Manage Tasks
+                <Button variant="outline" className="h-auto w-full justify-start gap-3 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Manage Tasks</p>
+                    <p className="text-xs text-muted-foreground">Review all tasks</p>
+                  </div>
                 </Button>
               </Link>
               <Link href="/dashboard/admin/withdrawals">
-                <Button variant="outline" className="w-full justify-start">
-                  <Wallet className="mr-2 h-4 w-4" />
-                  Process Withdrawals
+                <Button variant="outline" className="h-auto w-full justify-start gap-3 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <Wallet className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Withdrawals</p>
+                    <p className="text-xs text-muted-foreground">Process requests</p>
+                  </div>
                 </Button>
               </Link>
               <Link href="/dashboard/admin/reports">
-                <Button variant="outline" className="w-full justify-start">
-                  <AlertTriangle className="mr-2 h-4 w-4" />
-                  Handle Reports
+                <Button variant="outline" className="h-auto w-full justify-start gap-3 p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                    <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium">Handle Reports</p>
+                    <p className="text-xs text-muted-foreground">Review issues</p>
+                  </div>
                 </Button>
               </Link>
             </div>

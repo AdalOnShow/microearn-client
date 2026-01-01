@@ -9,36 +9,38 @@ import { SecurePayments } from "@/components/home/secure-payments";
 export default function Home() {
   return (
     <BasicLayout>
-      {/* Hero Section - Client Component */}
-      <section className="border-b border-border">
+      {/* Hero Section */}
+      <section className="border-b border-border bg-muted/20">
         <HeroSlider />
       </section>
 
-      {/* Best Workers - Server Component */}
+      {/* Best Workers */}
       <BestWorkers />
 
-      {/* How It Works - Server Component */}
+      {/* How It Works */}
       <HowItWorks />
 
-      {/* Why Trust Us - Server Component */}
+      {/* Why Trust Us */}
       <WhyTrustUs />
 
-      {/* Testimonials - Client Component */}
-      <section className="py-16">
+      {/* Testimonials */}
+      <section className="border-y border-border py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight">What Our Users Say</h2>
-            <p className="mt-2 text-muted-foreground">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              What Our Users Say
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
               Real feedback from real earners
             </p>
           </div>
-          <div className="mt-10">
+          <div className="mt-12">
             <TestimonialsSlider />
           </div>
         </div>
       </section>
 
-      {/* Secure Payments - Server Component */}
+      {/* Secure Payments */}
       <SecurePayments />
     </BasicLayout>
   );

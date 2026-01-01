@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getDb } from "@/lib/mongodb";
 
+// Force Node.js runtime (not Edge) because MongoDB driver uses crypto
+export const runtime = "nodejs";
+
 export async function POST(request) {
   try {
     const { name, email, password, image, role } = await request.json();
