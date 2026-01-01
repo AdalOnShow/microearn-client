@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { requireRole } from "@/lib/auth-utils";
 import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -36,16 +35,7 @@ const notifications = [
 ];
 
 export default async function WorkerDashboard() {
-  const session = await auth();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  if (session.user.role !== "Worker") {
-    redirect("/dashboard");
-  }
-
+  const session = await requireRole(["Worker"]);
   const { user } = session;
 
   return (

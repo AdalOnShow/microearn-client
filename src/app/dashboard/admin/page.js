@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { requireRole } from "@/lib/auth-utils";
 import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,15 +39,7 @@ const pendingWithdrawals = [
 ];
 
 export default async function AdminDashboard() {
-  const session = await auth();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  if (session.user.role !== "Admin") {
-    redirect("/dashboard");
-  }
+  await requireRole(["Admin"]);
 
   return (
     <DashboardLayout>

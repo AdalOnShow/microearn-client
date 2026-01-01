@@ -56,7 +56,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!existingUser) {
-          // New Google user - default to Worker role with 10 coins
           await db.collection("users").insertOne({
             name: user.name,
             email: user.email,
@@ -71,33 +70,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, user, trigger, session }) {
+      // Initial sign in
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.coins = user.coins;
       }
 
-      // Fetch latest user data from DB
+      // Always fetch fresh user data from DB on token refresh
       if (token.email) {
-        const db = await getDb();
-        const dbUser = await db.collection("users").findOne({
-          email: token.email,
-        });
-        if (dbUser) {
-          token.id = dbUser._id.toString();
-          token.role = dbUser.role;
-          token.coins = dbUser.coins;
+        try {
+          const db = await getDb();
+          const dbUser = await db.collection("users").findOne({
+            email: token.email,
+          });
+          if (dbUser) {
+            token.id = dbUser._id.toString();
+            token.role = dbUser.role;
+            token.coins = dbUser.coins;
+            token.name = dbUser.name;
+            token.picture = dbUser.image;
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
       }
 
+      // Handle session updates
       if (trigger === "update" && session) {
-        token.coins = session.coins;
+        if (session.coins !== undefined) token.coins = session.coins;
+        if (session.role !== undefined) token.role = session.role;
+        if (session.name !== undefined) token.name = session.name;
       }
 
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (token && session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.coins = token.coins;
@@ -111,5 +120,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  trustHost: true,
 });

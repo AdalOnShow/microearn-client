@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { requireRole } from "@/lib/auth-utils";
 import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,16 +34,7 @@ const coinPackages = [
 ];
 
 export default async function BuyerDashboard() {
-  const session = await auth();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  if (session.user.role !== "Buyer") {
-    redirect("/dashboard");
-  }
-
+  const session = await requireRole(["Buyer"]);
   const { user } = session;
 
   return (
