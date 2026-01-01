@@ -1,73 +1,45 @@
 import { BasicLayout } from "@/components/layouts";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+import { HeroSlider } from "@/components/home/hero-slider";
+import { BestWorkers } from "@/components/home/best-workers";
+import { TestimonialsSlider } from "@/components/home/testimonials-slider";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { WhyTrustUs } from "@/components/home/why-trust-us";
+import { SecurePayments } from "@/components/home/secure-payments";
 
 export default function Home() {
   return (
     <BasicLayout>
-      <div className="space-y-12">
-        <section className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Earn Money Online
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Complete simple tasks and earn real money. Join thousands of users already earning with MicroEarn.
-          </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <Link href="/register">
-              <Button size="lg">Get Started</Button>
-            </Link>
-            <Link href="/about">
-              <Button variant="outline" size="lg">Learn More</Button>
-            </Link>
+      {/* Hero Section - Client Component */}
+      <section className="border-b border-border">
+        <HeroSlider />
+      </section>
+
+      {/* Best Workers - Server Component */}
+      <BestWorkers />
+
+      {/* How It Works - Server Component */}
+      <HowItWorks />
+
+      {/* Why Trust Us - Server Component */}
+      <WhyTrustUs />
+
+      {/* Testimonials - Client Component */}
+      <section className="py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight">What Our Users Say</h2>
+            <p className="mt-2 text-muted-foreground">
+              Real feedback from real earners
+            </p>
           </div>
-        </section>
+          <div className="mt-10">
+            <TestimonialsSlider />
+          </div>
+        </div>
+      </section>
 
-        <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Simple Tasks</CardTitle>
-              <CardDescription>
-                Complete surveys, watch videos, and more
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Easy tasks that anyone can complete from anywhere in the world.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Fast Payments</CardTitle>
-              <CardDescription>
-                Get paid quickly and securely
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Withdraw your earnings via multiple payment methods.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Referral Program</CardTitle>
-              <CardDescription>
-                Earn more by inviting friends
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Get bonus earnings when your referrals complete tasks.
-              </p>
-            </CardContent>
-          </Card>
-        </section>
-      </div>
+      {/* Secure Payments - Server Component */}
+      <SecurePayments />
     </BasicLayout>
   );
 }
