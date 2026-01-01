@@ -1,11 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, Bell, LogOut, User, Settings } from "lucide-react";
+import { Menu, Bell, LogOut, User, Settings, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Coins } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import Link from "next/link";
 
 export function Topbar({ onMenuClick }) {
   const { data: session } = useSession();
@@ -27,7 +26,8 @@ export function Topbar({ onMenuClick }) {
 
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background px-4 lg:px-6">
-      <div className="flex items-center gap-4">
+      {/* Left: Menu button (mobile) + Logo */}
+      <div className="flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
@@ -36,34 +36,45 @@ export function Topbar({ onMenuClick }) {
         >
           <Menu className="h-5 w-5" />
         </Button>
-        <div className="hidden lg:block">
-          <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
-          <p className="text-xs text-muted-foreground">Welcome back, {user?.name?.split(' ')[0] || 'User'}</p>
-        </div>
+        
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+            <span className="text-sm font-bold text-primary-foreground">M</span>
+          </div>
+          <span className="hidden text-lg font-semibold tracking-tight sm:block">
+            MicroEarn
+          </span>
+        </Link>
       </div>
 
-      <div className="flex items-center gap-2">
+      {/* Right: Coins, User Info, Notification */}
+      <div className="flex items-center gap-2 sm:gap-3">
         <ThemeToggle />
-        
-        <Badge variant="secondary" className="gap-1.5 px-3 py-1.5">
+
+        {/* Available Coins */}
+        <Badge variant="secondary" className="gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5">
           <Coins className="h-3.5 w-3.5" />
           <span className="font-semibold">{user?.coins || 0}</span>
         </Badge>
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
-        </Button>
-
+        {/* User Info with Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-9 w-9 border border-border">
+            <Button variant="ghost" className="flex items-center gap-2 px-2 sm:px-3">
+              <Avatar className="h-8 w-8 border border-border">
                 <AvatarImage src={user?.image} alt={user?.name} />
                 <AvatarFallback className="bg-muted text-sm font-medium">
                   {user?.name?.charAt(0)?.toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
+              <div className="hidden flex-col items-start text-left sm:flex">
+                <span className="text-sm font-medium leading-tight">
+                  {user?.name || "User"}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {user?.role || "Worker"}
+                </span>
+              </div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -74,7 +85,7 @@ export function Topbar({ onMenuClick }) {
                   {user?.email}
                 </p>
                 <Badge variant="outline" className="mt-2 w-fit text-xs">
-                  {user?.role}
+                  {user?.role || "Worker"}
                 </Badge>
               </div>
             </DropdownMenuLabel>
@@ -101,6 +112,12 @@ export function Topbar({ onMenuClick }) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Notification Icon (UI only) */}
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5" />
+          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+        </Button>
       </div>
     </header>
   );

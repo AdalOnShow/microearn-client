@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { DashboardLayout } from "@/components/layouts";
 
-export default async function DashboardLayout({ children }) {
+export default async function DashboardRootLayout({ children }) {
   const session = await auth();
 
   // Server-side auth check - redirect if not authenticated
@@ -9,5 +10,5 @@ export default async function DashboardLayout({ children }) {
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

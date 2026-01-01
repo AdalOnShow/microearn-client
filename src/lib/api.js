@@ -61,6 +61,7 @@ export const api = {
   // Users
   getUsers: (params) => fetchApi(`/users?${new URLSearchParams(params)}`),
   getTopWorkers: (limit = 6) => fetchApi(`/users/top-workers?limit=${limit}`),
+  getBuyerStats: () => fetchApi("/users/buyer/stats"),
   getUser: (id) => fetchApi(`/users/${id}`),
   updateProfile: (data) => fetchApi("/users/profile", { method: "PATCH", body: JSON.stringify(data) }),
   updateUserRole: (id, role) => fetchApi(`/users/${id}/role`, { method: "PATCH", body: JSON.stringify({ role }) }),
