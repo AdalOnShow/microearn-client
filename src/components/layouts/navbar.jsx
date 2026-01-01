@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,18 +14,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Coins, LogOut, User, Github } from "lucide-react";
 
-export function Navbar({ user = null }) {
-  const isLoggedIn = !!user;
+export function Navbar() {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/" });
+  };
 
   return (
     <header className="border-b border-border bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href={isLoggedIn ? "/" : "/"} className="text-xl font-bold">
+        <Link href="/" className="text-xl font-bold">
           MicroEarn
         </Link>
 
         <div className="flex items-center gap-3">
-          {isLoggedIn ? (
+          {user ? (
             <>
               <Link href="/dashboard">
                 <Button variant="ghost" size="sm">
@@ -41,7 +47,7 @@ export function Navbar({ user = null }) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={user.image} alt={user.name} />
                       <AvatarFallback>
                         {user.name?.charAt(0)?.toUpperCase() || "U"}
                       </AvatarFallback>
@@ -56,11 +62,12 @@ export function Navbar({ user = null }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/logout" className="flex items-center text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </Link>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex items-center text-destructive cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

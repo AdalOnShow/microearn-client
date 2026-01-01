@@ -1,56 +1,70 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const session = await auth();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const { user } = session;
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Welcome back, {user.name?.split(" ")[0]}!
+          </h1>
           <p className="text-muted-foreground">
-            Welcome back! Here&apos;s your overview.
+            Here&apos;s your overview as a {user.role}.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Total Earnings</CardDescription>
-              <CardTitle className="text-2xl">$124.50</CardTitle>
+              <CardDescription>Available Coins</CardDescription>
+              <CardTitle className="text-2xl">{user.coins || 0}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">+12% from last month</p>
+              <p className="text-xs text-muted-foreground">Your current balance</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Role</CardDescription>
+              <CardTitle className="text-2xl">{user.role}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-muted-foreground">
+                {user.role === "Worker" ? "Complete tasks to earn" : "Post tasks to hire"}
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Tasks Completed</CardDescription>
-              <CardTitle className="text-2xl">48</CardTitle>
+              <CardTitle className="text-2xl">0</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">+8 this week</p>
+              <p className="text-xs text-muted-foreground">This month</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Pending Balance</CardDescription>
-              <CardTitle className="text-2xl">$18.25</CardTitle>
+              <CardDescription>Pending</CardDescription>
+              <CardTitle className="text-2xl">0</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">Available in 3 days</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription>Referrals</CardDescription>
-              <CardTitle className="text-2xl">12</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground">+2 this month</p>
+              <p className="text-xs text-muted-foreground">Awaiting review</p>
             </CardContent>
           </Card>
         </div>
@@ -58,50 +72,28 @@ export default function Dashboard() {
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Tasks</CardTitle>
-              <CardDescription>Your latest completed tasks</CardDescription>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Your latest actions</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { name: "Survey: Product Feedback", amount: "$2.50", status: "Completed" },
-                  { name: "Watch Video Ad", amount: "$0.25", status: "Completed" },
-                  { name: "App Testing", amount: "$5.00", status: "Pending" },
-                ].map((task, i) => (
-                  <div key={i} className="flex items-center justify-between border-b border-border pb-4 last:border-0 last:pb-0">
-                    <div>
-                      <p className="text-sm font-medium">{task.name}</p>
-                      <p className="text-xs text-muted-foreground">{task.amount}</p>
-                    </div>
-                    <Badge variant={task.status === "Completed" ? "secondary" : "outline"}>
-                      {task.status}
-                    </Badge>
-                  </div>
-                ))}
+              <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
+                No recent activity
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Available Tasks</CardTitle>
-              <CardDescription>Tasks you can complete now</CardDescription>
+              <CardTitle>
+                {user.role === "Worker" ? "Available Tasks" : "Your Tasks"}
+              </CardTitle>
+              <CardDescription>
+                {user.role === "Worker" ? "Tasks you can complete" : "Tasks you have posted"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { name: "Daily Check-in", amount: "$0.10", time: "1 min" },
-                  { name: "Survey: Shopping Habits", amount: "$3.00", time: "10 min" },
-                  { name: "Review Website", amount: "$1.50", time: "5 min" },
-                ].map((task, i) => (
-                  <div key={i} className="flex items-center justify-between border-b border-border pb-4 last:border-0 last:pb-0">
-                    <div>
-                      <p className="text-sm font-medium">{task.name}</p>
-                      <p className="text-xs text-muted-foreground">{task.time}</p>
-                    </div>
-                    <span className="text-sm font-medium">{task.amount}</span>
-                  </div>
-                ))}
+              <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
+                No tasks available
               </div>
             </CardContent>
           </Card>

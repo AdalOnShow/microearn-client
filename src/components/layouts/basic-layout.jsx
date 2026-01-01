@@ -1,10 +1,10 @@
 import { Navbar } from "./navbar";
 import { Footer } from "./footer";
 
-export function BasicLayout({ children, user = null }) {
+export function BasicLayout({ children }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar user={user} />
+      <Navbar />
       <main className="flex-1">
         {children}
       </main>
