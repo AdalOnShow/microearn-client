@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  serverExternalPackages: ['mongodb'],
+  // Add empty turbopack config to silence the warning
+  turbopack: {},
 };
 
 export default nextConfig;
