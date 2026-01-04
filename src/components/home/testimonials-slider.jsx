@@ -75,9 +75,9 @@ export function TestimonialsSlider() {
 
               {/* Testimonial content */}
               <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-                "{testimonial.content.length > 120 
-                  ? testimonial.content.slice(0, 120) + "..." 
-                  : testimonial.content}"
+                &ldquo;{testimonial.content.length > 120 
+                  ? testimonial.content.slice(0, 120) + "&hellip;" 
+                  : testimonial.content}&rdquo;
               </p>
 
               {/* Author info */}
