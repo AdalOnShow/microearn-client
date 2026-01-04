@@ -4,6 +4,11 @@ import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { getDb } from "./mongodb";
 
+// SECURITY FIX: Ensure AUTH_SECRET is set
+if (!process.env.AUTH_SECRET) {
+  throw new Error("CRITICAL: AUTH_SECRET environment variable is not set in .env.local");
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({

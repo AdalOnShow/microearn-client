@@ -1,7 +1,8 @@
 import { MongoClient } from "mongodb";
 
+// SECURITY FIX: Ensure MONGODB_URI is set
 if (!process.env.MONGODB_URI) {
-  throw new Error("Please add MONGODB_URI to .env.local");
+  throw new Error("CRITICAL: MONGODB_URI environment variable is not set in .env.local");
 }
 
 const uri = process.env.MONGODB_URI;

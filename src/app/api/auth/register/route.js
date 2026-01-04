@@ -46,7 +46,7 @@ export async function POST(request) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Set coins based on role
-    const coins = role === "Worker" ? 10 : 50;
+    const coin = role === "Worker" ? 10 : 50;
 
     // Create user
     const result = await db.collection("users").insertOne({
@@ -55,7 +55,7 @@ export async function POST(request) {
       password: hashedPassword,
       image: image || "",
       role,
-      coins,
+      coin, // SECURITY FIX: Use consistent field name 'coin' not 'coins'
       provider: "credentials",
       createdAt: new Date(),
     });

@@ -4,6 +4,15 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req) {
   const { nextUrl } = req;
   
+  // SECURITY FIX: Ensure AUTH_SECRET is set
+  if (!process.env.AUTH_SECRET) {
+    console.error("CRITICAL: AUTH_SECRET environment variable is not set");
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 }
+    );
+  }
+  
   // Get the token without database access (JWT only)
   const token = await getToken({ 
     req, 
