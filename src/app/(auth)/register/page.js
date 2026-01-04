@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Loader2, Briefcase, User } from "lucide-react";
 
 export default function RegisterPage() {
@@ -150,14 +151,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="image">Profile Image URL (optional)</Label>
-              <Input
-                id="image"
-                name="image"
-                type="url"
-                placeholder="https://example.com/avatar.jpg"
+              <ImageUpload
+                label="Profile Image (optional)"
                 value={formData.image}
-                onChange={handleChange}
+                onChange={(url) => setFormData({ ...formData, image: url })}
+                disabled={loading}
+                placeholder="Upload your profile picture"
+                maxSize={2 * 1024 * 1024} // 2MB for profile images
               />
             </div>
 

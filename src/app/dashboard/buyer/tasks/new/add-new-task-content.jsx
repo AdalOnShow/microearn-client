@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -295,16 +296,15 @@ export function AddNewTaskContent() {
               )}
             </div>
 
-            {/* Task Image URL */}
+            {/* Task Image */}
             <div className="space-y-2">
-              <Label htmlFor="task_image_url">Task Image URL (optional)</Label>
-              <Input
-                id="task_image_url"
-                name="task_image_url"
-                type="url"
-                placeholder="https://example.com/image.jpg"
+              <ImageUpload
+                label="Task Image (optional)"
                 value={formData.task_image_url}
-                onChange={handleChange}
+                onChange={(url) => setFormData(prev => ({ ...prev, task_image_url: url }))}
+                disabled={loading}
+                placeholder="Upload an image for your task"
+                maxSize={3 * 1024 * 1024} // 3MB for task images
               />
             </div>
 
