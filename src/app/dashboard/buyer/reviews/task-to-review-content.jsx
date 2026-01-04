@@ -22,8 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Eye, CheckCircle, XCircle, Loader2, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 export function TaskToReviewContent() {
   const [submissions, setSubmissions] = useState([]);
@@ -39,23 +38,15 @@ export function TaskToReviewContent() {
 
   const fetchSubmissions = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/submissions?status=pending`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch submissions");
+      const response = await api.getSubmissions({ status: "pending" });
+      if (response.success) {
+        setSubmissions(response.submissions || []);
+      } else {
+        throw new Error(response.message || "Failed to fetch submissions");
       }
-
-      setSubmissions(data.submissions || []);
     } catch (err) {
-      setError(err.message);
+      console.error("Fetch submissions error:", err);
+      setError(err.message || "Failed to load submissions");
     } finally {
       setLoading(false);
     }
@@ -82,44 +73,32 @@ export function TaskToReviewContent() {
     setActionLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${API_URL}/submissions/${selectedSubmission._id}/review`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-          body: JSON.stringify({
-            status: confirmAction === "approve" ? "approved" : "rejected",
-          }),
-        }
-      );
+      const response = await api.reviewSubmission(selectedSubmission._id, {
+        status: confirmAction === "approve" ? "approved" : "rejected",
+      });
 
-      const data = await res.json();
+      if (response.success) {
+        // Remove from list
+        setSubmissions((prev) =>
+          prev.filter((s) => s._id !== selectedSubmission._id)
+        );
 
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to process submission");
+        toast.success(
+          confirmAction === "approve"
+            ? "Submission approved successfully"
+            : "Submission rejected"
+        );
+
+        setConfirmModalOpen(false);
+        setViewModalOpen(false);
+        setSelectedSubmission(null);
+        setConfirmAction(null);
+      } else {
+        throw new Error(response.message || "Failed to process submission");
       }
-
-      // Remove from list
-      setSubmissions((prev) =>
-        prev.filter((s) => s._id !== selectedSubmission._id)
-      );
-
-      toast.success(
-        confirmAction === "approve"
-          ? "Submission approved successfully"
-          : "Submission rejected"
-      );
-
-      setConfirmModalOpen(false);
-      setViewModalOpen(false);
-      setSelectedSubmission(null);
-      setConfirmAction(null);
     } catch (err) {
-      toast.error(err.message);
+      console.error("Review submission error:", err);
+      toast.error(err.message || "Failed to process submission");
     } finally {
       setActionLoading(false);
     }

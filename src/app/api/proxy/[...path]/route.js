@@ -4,24 +4,38 @@ import { NextResponse } from "next/server";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export async function GET(request, { params }) {
-  return handleRequest(request, params, "GET");
+  const resolvedParams = await params;
+  return handleRequest(request, resolvedParams, "GET");
 }
 
 export async function POST(request, { params }) {
-  return handleRequest(request, params, "POST");
+  const resolvedParams = await params;
+  return handleRequest(request, resolvedParams, "POST");
 }
 
 export async function PATCH(request, { params }) {
-  return handleRequest(request, params, "PATCH");
+  const resolvedParams = await params;
+  return handleRequest(request, resolvedParams, "PATCH");
 }
 
 export async function DELETE(request, { params }) {
-  return handleRequest(request, params, "DELETE");
+  const resolvedParams = await params;
+  return handleRequest(request, resolvedParams, "DELETE");
 }
 
-async function handleRequest(request, { params }, method) {
+async function handleRequest(request, params, method) {
   try {
     const session = await auth();
+    
+    // Check if params and params.path exist
+    if (!params || !params.path) {
+      console.error("Proxy error: params.path is undefined", { params });
+      return NextResponse.json(
+        { success: false, message: "Invalid path parameters" },
+        { status: 400 }
+      );
+    }
+    
     const path = params.path.join("/");
     const url = new URL(request.url);
     

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -229,27 +228,22 @@ export default function WithdrawalsPage() {
 
   if (status === "loading" || loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-sm text-destructive">{error}</p>
-        </div>
-      </DashboardLayout>
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Withdrawals</h1>
           <p className="mt-1 text-sm text-muted-foreground">Convert your coins to real money</p>
@@ -482,6 +476,5 @@ export default function WithdrawalsPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
-  );
+    );
 }

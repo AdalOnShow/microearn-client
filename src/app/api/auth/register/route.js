@@ -28,7 +28,10 @@ export async function POST(request) {
 
     if (!/^[a-zA-Z\s'-]+$/.test(cleanName)) {
       return NextResponse.json(
-        { error: "Name can only contain letters, spaces, hyphens, and apostrophes" },
+        {
+          error:
+            "Name can only contain letters, spaces, hyphens, and apostrophes",
+        },
         { status: 400 }
       );
     }
@@ -69,7 +72,9 @@ export async function POST(request) {
     const db = await getDb();
 
     // Check if user exists
-    const existingUser = await db.collection("users").findOne({ email: cleanEmail });
+    const existingUser = await db
+      .collection("users")
+      .findOne({ email: cleanEmail });
     if (existingUser) {
       return NextResponse.json(
         { error: "User with this email already exists" },
@@ -90,10 +95,14 @@ export async function POST(request) {
       password: hashedPassword,
       image: image ? image.trim() : "",
       role,
-      coin, // SECURITY FIX: Use consistent field name 'coin' not 'coins'
+      coin,
       provider: "credentials",
       createdAt: new Date(),
     });
+
+    if (!result.insertedId) {
+      console.log("user saved on database");
+    }
 
     return NextResponse.json(
       {

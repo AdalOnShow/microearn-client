@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { DashboardLayout } from "@/components/layouts";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -54,27 +53,22 @@ export default function WorkerTasksPage() {
 
   if (status === "loading" || loading) {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <DashboardLayout>
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-sm text-destructive">{error}</p>
-        </div>
-      </DashboardLayout>
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-sm text-destructive">{error}</p>
+      </div>
     );
   }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Available Tasks</h1>
           <p className="mt-1 text-sm text-muted-foreground">Browse and complete tasks to earn coins</p>
@@ -121,6 +115,5 @@ export default function WorkerTasksPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
-  );
+    );
 }

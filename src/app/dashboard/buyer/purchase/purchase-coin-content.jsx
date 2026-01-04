@@ -16,8 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Coins, Loader2, CheckCircle, CreditCard } from "lucide-react";
 import { toast } from "sonner";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 const COIN_PACKAGES = [
   { id: "pkg_10", coins: 10, price: 1, popular: false },
@@ -28,7 +27,7 @@ const COIN_PACKAGES = [
 
 export function PurchaseCoinContent() {
   const router = useRouter();
-  const { data: session, update: updateSession } = useSession();
+  const { data: session } = useSession();
   const userCoins = session?.user?.coins || 0;
 
   const [selectedPackage, setSelectedPackage] = useState(null);
@@ -49,43 +48,28 @@ export function PurchaseCoinContent() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/payments/purchase`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify({
-          packageId: selectedPackage.id,
-          paymentMethod: "dummy",
-        }),
+      const response = await api.purchaseCoins({
+        packageId: selectedPackage.id,
+        paymentMethod: "dummy",
       });
 
-      const data = await res.json();
+      if (response.success) {
+        // Short delay to show success state
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      if (!res.ok) {
-        throw new Error(data.message || "Payment failed");
+        toast.success(`Successfully purchased ${selectedPackage.coins} coins!`);
+        setProcessingModalOpen(false);
+        
+        // Refresh the page to get updated coin balance
+        router.refresh();
+        router.push("/dashboard/buyer/payments");
+      } else {
+        throw new Error(response.message || "Payment failed");
       }
-
-      // Update session with new coin balance
-      await updateSession({
-        ...session,
-        user: {
-          ...session.user,
-          coins: userCoins + selectedPackage.coins,
-        },
-      });
-
-      // Short delay to show success state
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast.success(`Successfully purchased ${selectedPackage.coins} coins!`);
-      setProcessingModalOpen(false);
-      router.push("/dashboard/buyer/payments");
     } catch (err) {
+      console.error("Purchase error:", err);
       setProcessingModalOpen(false);
-      toast.error(err.message);
+      toast.error(err.message || "Payment failed. Please try again.");
     } finally {
       setLoading(false);
       setSelectedPackage(null);
@@ -230,6 +214,11 @@ export function PurchaseCoinContent() {
       {/* Processing Payment Modal */}
       <Dialog open={processingModalOpen} onOpenChange={() => {}}>
         <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {loading ? "Processing Payment" : "Payment Successful!"}
+            </DialogTitle>
+          </DialogHeader>
           <div className="flex flex-col items-center py-6 text-center">
             {loading ? (
               <>

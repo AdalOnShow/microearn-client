@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import { DashboardLayout } from "@/components/layouts";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -108,21 +108,21 @@ export default function TaskDetailsPage() {
 
   if (status === "loading" || loading) {
     return (
-      <DashboardLayout>
+      
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      </DashboardLayout>
+      
     );
   }
 
   if (error || !task) {
     return (
-      <DashboardLayout>
+      
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <p className="text-sm text-destructive">{error || "Task not found"}</p>
         </div>
-      </DashboardLayout>
+      
     );
   }
 
@@ -130,7 +130,7 @@ export default function TaskDetailsPage() {
   const canSubmit = !hasSubmitted && !deadlinePassed && task.status === "active";
 
   return (
-    <DashboardLayout>
+    
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Task Details</h1>
@@ -258,6 +258,6 @@ export default function TaskDetailsPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    
   );
 }

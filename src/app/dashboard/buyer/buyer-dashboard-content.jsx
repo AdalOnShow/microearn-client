@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Clock, Coins } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 export function BuyerDashboardContent() {
   const { data: session } = useSession();
@@ -16,23 +15,15 @@ export function BuyerDashboardContent() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${API_URL}/users/buyer/stats`, {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to fetch stats");
+        const response = await api.getBuyerStats();
+        if (response.success) {
+          setStats(response.stats);
+        } else {
+          throw new Error(response.message || "Failed to fetch stats");
         }
-
-        setStats(data.stats);
       } catch (err) {
-        setError(err.message);
+        console.error("Buyer stats error:", err);
+        setError(err.message || "Failed to load stats");
       } finally {
         setLoading(false);
       }

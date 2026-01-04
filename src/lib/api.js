@@ -83,6 +83,10 @@ export const api = {
   getReports: (params) => fetchApi(`/reports?${new URLSearchParams(params)}`),
   createReport: (data) => fetchApi("/reports", { method: "POST", body: JSON.stringify(data) }),
   updateReport: (id, data) => fetchApi(`/reports/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  // Payments
+  purchaseCoins: (data) => fetchApi("/payments/purchase", { method: "POST", body: JSON.stringify(data) }),
+  getPayments: (params) => fetchApi(`/payments/history?${new URLSearchParams(params)}`),
 };
 
 export { ApiError };

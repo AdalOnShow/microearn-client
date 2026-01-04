@@ -12,8 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loader2, Receipt } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 export function PaymentHistoryContent() {
   const [payments, setPayments] = useState([]);
@@ -23,23 +22,15 @@ export function PaymentHistoryContent() {
   useEffect(() => {
     async function fetchPayments() {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${API_URL}/payments/history`, {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message || "Failed to fetch payments");
+        const response = await api.getPayments({ limit: 50 });
+        if (response.success) {
+          setPayments(response.payments || []);
+        } else {
+          throw new Error(response.message || "Failed to fetch payments");
         }
-
-        setPayments(data.payments || []);
       } catch (err) {
-        setError(err.message);
+        console.error("Payment history error:", err);
+        setError(err.message || "Failed to load payments");
       } finally {
         setLoading(false);
       }

@@ -10,8 +10,7 @@ import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 export function AddNewTaskContent() {
   const router = useRouter();
@@ -100,42 +99,42 @@ export function AddNewTaskContent() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/tasks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify({
-          title: formData.task_title,
-          description: formData.task_detail,
-          quantity: parseInt(formData.required_workers),
-          reward: parseInt(formData.payable_amount),
-          deadline: formData.completion_date,
-          submissionInfo: formData.submission_info,
-          imageUrl: formData.task_image_url,
-        }),
+      const response = await api.createTask({
+        title: formData.task_title,
+        description: formData.task_detail,
+        quantity: parseInt(formData.required_workers),
+        reward: parseInt(formData.payable_amount),
+        deadline: formData.completion_date,
+        submissionInfo: formData.submission_info,
+        imageUrl: formData.task_image_url,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
+      if (response.success) {
+        toast.success("Task created successfully!");
+        router.push("/dashboard/buyer/tasks");
+      } else {
         // Handle insufficient coins from server
-        if (data.insufficientCoins) {
+        if (response.insufficientCoins) {
           toast.error("Not enough coins. Purchase coin.", {
-            description: `You need ${data.required} coins but only have ${data.available}.`,
+            description: `You need ${response.required} coins but only have ${response.available}.`,
           });
           router.push("/dashboard/buyer/purchase");
           return;
         }
-        throw new Error(data.message || "Failed to create task");
+        throw new Error(response.message || "Failed to create task");
       }
-
-      toast.success("Task created successfully!");
-      router.push("/dashboard/buyer/tasks");
     } catch (err) {
-      toast.error(err.message);
+      console.error("Create task error:", err);
+      
+      // Handle specific error messages
+      if (err.message.includes("insufficient coins") || err.message.includes("not enough coins")) {
+        toast.error("Not enough coins. Purchase coin.", {
+          description: "You don't have enough coins to create this task.",
+        });
+        router.push("/dashboard/buyer/purchase");
+      } else {
+        toast.error(err.message || "Failed to create task. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

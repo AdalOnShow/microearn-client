@@ -25,8 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, Pencil, Trash2, FileText } from "lucide-react";
 import { toast } from "sonner";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { api } from "@/lib/api";
 
 export function MyTasksContent() {
   const { data: session } = useSession();
@@ -50,32 +49,27 @@ export function MyTasksContent() {
 
   const fetchTasks = async () => {
     try {
-      const token = localStorage.getItem("token");
       const buyerId = session?.user?.id;
-      
-      const res = await fetch(`${API_URL}/tasks?buyer=${buyerId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch tasks");
+      if (!buyerId) {
+        throw new Error("User ID not found");
       }
+      
+      const response = await api.getTasks({ buyer: buyerId });
+      if (response.success) {
+        // Sort by completion_date (deadline) descending
+        const sortedTasks = (response.tasks || []).sort((a, b) => {
+          const dateA = a.deadline ? new Date(a.deadline) : new Date(0);
+          const dateB = b.deadline ? new Date(b.deadline) : new Date(0);
+          return dateB - dateA;
+        });
 
-      // Sort by completion_date (deadline) descending
-      const sortedTasks = (data.tasks || []).sort((a, b) => {
-        const dateA = a.deadline ? new Date(a.deadline) : new Date(0);
-        const dateB = b.deadline ? new Date(b.deadline) : new Date(0);
-        return dateB - dateA;
-      });
-
-      setTasks(sortedTasks);
+        setTasks(sortedTasks);
+      } else {
+        throw new Error(response.message || "Failed to fetch tasks");
+      }
     } catch (err) {
-      setError(err.message);
+      console.error("Fetch tasks error:", err);
+      setError(err.message || "Failed to load tasks");
     } finally {
       setLoading(false);
     }
@@ -107,34 +101,24 @@ export function MyTasksContent() {
     setUpdateLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/tasks/${selectedTask._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(updateForm),
-      });
+      const response = await api.updateTask(selectedTask._id, updateForm);
+      if (response.success) {
+        // Update local state
+        setTasks((prev) =>
+          prev.map((t) =>
+            t._id === selectedTask._id ? { ...t, ...updateForm } : t
+          )
+        );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to update task");
+        toast.success("Task updated successfully");
+        setUpdateModalOpen(false);
+        setSelectedTask(null);
+      } else {
+        throw new Error(response.message || "Failed to update task");
       }
-
-      // Update local state
-      setTasks((prev) =>
-        prev.map((t) =>
-          t._id === selectedTask._id ? { ...t, ...updateForm } : t
-        )
-      );
-
-      toast.success("Task updated successfully");
-      setUpdateModalOpen(false);
-      setSelectedTask(null);
     } catch (err) {
-      toast.error(err.message);
+      console.error("Update task error:", err);
+      toast.error(err.message || "Failed to update task");
     } finally {
       setUpdateLoading(false);
     }
@@ -151,33 +135,24 @@ export function MyTasksContent() {
     setDeleteLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/tasks/${selectedTask._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
+      const response = await api.deleteTask(selectedTask._id);
+      if (response.success) {
+        // Remove from local state
+        setTasks((prev) => prev.filter((t) => t._id !== selectedTask._id));
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to delete task");
+        toast.success(
+          response.refunded > 0
+            ? `Task deleted. ${response.refunded} coins refunded.`
+            : "Task deleted successfully"
+        );
+        setDeleteModalOpen(false);
+        setSelectedTask(null);
+      } else {
+        throw new Error(response.message || "Failed to delete task");
       }
-
-      // Remove from local state
-      setTasks((prev) => prev.filter((t) => t._id !== selectedTask._id));
-
-      toast.success(
-        data.refunded > 0
-          ? `Task deleted. ${data.refunded} coins refunded.`
-          : "Task deleted successfully"
-      );
-      setDeleteModalOpen(false);
-      setSelectedTask(null);
     } catch (err) {
-      toast.error(err.message);
+      console.error("Delete task error:", err);
+      toast.error(err.message || "Failed to delete task");
     } finally {
       setDeleteLoading(false);
     }
