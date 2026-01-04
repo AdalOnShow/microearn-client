@@ -35,13 +35,22 @@ async function handleRequest(request, { params }, method) {
 
     // Add JWT token if user is authenticated
     if (session?.user) {
+      // SECURITY FIX: Ensure JWT_SECRET is set
+      if (!process.env.JWT_SECRET) {
+        console.error("CRITICAL: JWT_SECRET environment variable is not set");
+        return NextResponse.json(
+          { success: false, message: "Server configuration error" },
+          { status: 500 }
+        );
+      }
+
       // Generate a JWT token for the backend
       const jwt = require("jsonwebtoken");
       const token = jwt.sign(
         { 
           id: session.user.id,
         },
-        process.env.JWT_SECRET || "your-secret-key",
+        process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
       headers.Authorization = `Bearer ${token}`;
